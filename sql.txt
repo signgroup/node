@@ -1,0 +1,68 @@
+-- 查询
+select * from users;
+-- 条件查询
+select username,address from users where sex=1;
+-- 查询日期最新十条0
+select * from users order by date desc limit 10;
+-- 排序和分页顺序
+select *  from department order by name desc LIMIT 1 OFFSET 1
+-- 随机10条
+select * from users order by rand() limit 10;
+-- 单列模糊查询
+select *  from users where `name` like '%还%';
+-- 多列模糊查询
+select *  from users where concat(`name`,`date`,`address`,`age`) like '%管%';
+-- 条件修改
+update users set  `username` = '噶第三', `date` = '2020-07-28 09:36:27.111', `address` = '555', `age` = 23, `sex` = '2' where id='a8a66900-cd74-11ea-aeec-c9a9c16b67bf';
+-- 添加列
+alter table users add column password varchar(20) not null;
+-- 修改列
+alter table users change password password varchar(100) not null;
+-- 删除列
+alter table users drop column dep_id;
+
+-- 修改所有密码 
+update users set  password = 'e10adc3949ba59abbe56e057f20f883e';
+-- 条件删除
+delete from  users  where age =23;
+-- 查询总条数
+select count(*) as count from users;
+-- 添加唯一索引
+alter table  `users` add unique (`username`);
+-- 批量删除
+delete from users where id in ('354647b0-d13d-11ea-9d99-7f444d2cff7e');
+-- 创建部门
+create table department(
+	id int primary key auto_increment,
+	name varchar(100) not null,
+	address varchar(100)
+);
+-- 删除外键列
+alter table users drop foreign key fk_dept_user;
+-- 添加外键列
+alter table users add column dep_id VARCHAR(100);
+-- 设置外键约束 类型一致
+alter table users add constraint fk_dept_user foreign key (dep_id) references department(id);
+-- 查询
+select * from department;
+-- 批量添加数据
+insert into department (name,address) values ('部门1','地址1'),('部门2','地址2'),('部门3','地址3'),('部门4','地址4'),('部门5','地址5'),('部门6','地址6'),('部门7','地址7');
+-- 主表不能删除从表中引用的数据id=1
+delete from  department  where id=1;
+-- 查找外键名 FOREIGN KEY 
+show create table users;
+-- 内联结
+select users.name,department.name  from users  inner join department on users.dep_id = department.id;
+-- 内联结设置别名
+select u.name as '姓名',d.name as '部门' from users as u inner join department as d on u.dep_id = d.id;
+
+-- 内联条件查询
+select  department.name,users.name  from department  inner join users on users.dep_id = department.id where department.id='9ace49a0-d301-11ea-b170-bf0bbf80b615'
+-- 获取左表所有记录，右表部分记录
+select u.*,d.name as dep_name,d.address as dep_address from users as u LEFT JOIN department as d on u.dep_id=d.id
+
+
+select d.*,u.name as user_name,u.address as user_address from department as d  JOIN users as u on u.dep_id=d.id where d.id=6
+
+-- 连表模糊查询
+select u.*,d.name as dep_name,d.address as dep_address  from users as u  LEFT JOIN department as d on u.dep_id=d.id where concat(u.name,u.address,u.age,u.date,d.name,d.address ) like '%部门%' order by date desc;
